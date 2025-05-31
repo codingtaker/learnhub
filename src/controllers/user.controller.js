@@ -32,6 +32,7 @@ exports.registerUser = async (req, res) => {
     req.session.userId = newUser._id;
     req.session.userName = `${newUser.firstName} ${newUser.lastName}`;
     req.session.userRole = newUser.role;
+    req.session.user = newUser;
 
     return res.status(201).json({
       message: "Utilisateur enregistré avec succès.",
@@ -73,6 +74,7 @@ exports.loginUser = async (req, res) => {
     req.session.userId = user._id;
     req.session.userName = `${user.firstName} ${user.lastName}`;
     req.session.userRole = user.role;
+    req.session.user = user;
 
     return res.status(200).json({
       message: "Connexion réussie.",

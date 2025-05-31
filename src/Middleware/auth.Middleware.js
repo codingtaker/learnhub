@@ -2,11 +2,7 @@
 exports.checkRole = (allowedRoles) => {
   return async (req, res, next) => {
     if (!req.session.user || !allowedRoles.includes(req.session.user.role)) {
-      req.session.message = {
-        type: "danger",
-        message: "403 Access denied"
-      };
-      return res.redirect("/api/home");
+      return res.status(403).json({ error: "Access denied" });
     }
     next();
   };

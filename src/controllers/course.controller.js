@@ -17,9 +17,9 @@ exports.postCreateCourse = async (req, res) => {
         } = req.body;
 
         // On récupère le nom du formateur depuis la session
-        const instructorName = req.session.user ? req.session.user.nom : 'Inconnu';
+        const instructorName = req.session.user.firstName + ' ' + req.session.user.lastName;
         console.log('Nom du formateur:', instructorName);
-
+ 
         if (!title || !instructorName || !category || !level || !date || !maxStudents || !description) {
             console.warn('Champs manquants lors de la création du cours');
             return res.status(400).json({ message: 'Veuillez remplir tous les champs obligatoires.' });
