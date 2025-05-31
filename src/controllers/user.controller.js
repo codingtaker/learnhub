@@ -5,9 +5,9 @@ const User = require('../models/users.models');
 exports.registerUser = async (req, res) => {
   const { firstName, lastName, email, password, wantsToTeach, expertise, bio, role } = req.body;
   try {
-    if (!firstName || !lastName || !email || !password) {
-      throw new Error("Veuillez remplir tous les champs obligatoires");
-    }
+    // if (!firstName || !lastName || !email || !password) {
+    //   throw new Error("Veuillez remplir tous les champs obligatoires");
+    // }
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -61,6 +61,7 @@ exports.loginUser = async (req, res) => {
       throw new Error("Veuillez remplir tous les champs");
     }
 
+  
     const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({ message: "Email ou mot de passe incorrect." });
