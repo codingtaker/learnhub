@@ -33,6 +33,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
 app.use('/api/auth', require('./routes/auth.route'));
+app.use('/api/course', require('./routes/course.routes'));
 
 
 module.exports = app;

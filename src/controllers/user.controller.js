@@ -3,10 +3,10 @@ const User = require('../models/users.models');
 
 // INSCRIPTION
 exports.registerUser = async (req, res) => {
-  const { name, email, password, role } = req.body;
+  const { firstName, lastName, email, password, wantsToTeach, expertise, bio, role } = req.body;
   try {
-    if (!name || !email || !password) {
-      throw new Error("Veuillez remplir tous les champs");
+    if (!firstName || !lastName || !email || !password) {
+      throw new Error("Veuillez remplir tous les champs obligatoires");
     }
 
     const existingUser = await User.findOne({ email });
@@ -17,26 +17,33 @@ exports.registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const newUser = new User({
-      name,
+      firstName,
+      lastName,
       email,
       password: hashedPassword,
+      wantsToTeach: wantsToTeach || false,
+      expertise: expertise || '',
+      bio: bio || '',
       role: role || 'student'
     });
 
     await newUser.save();
 
-    // Création de la session
     req.session.userId = newUser._id;
-    req.session.userName = newUser.name;
+    req.session.userName = `${newUser.firstName} ${newUser.lastName}`;
     req.session.userRole = newUser.role;
 
-    // Réponse ou redirection
     return res.status(201).json({
       message: "Utilisateur enregistré avec succès.",
       user: {
         id: newUser._id,
-        name: newUser.name,
-        email: newUser.email
+        firstName: newUser.firstName,
+        lastName: newUser.lastName,
+        email: newUser.email,
+        role: newUser.role,
+        wantsToTeach: newUser.wantsToTeach,
+        expertise: newUser.expertise,
+        bio: newUser.bio
       }
     });
   } catch (error) {
@@ -64,15 +71,20 @@ exports.loginUser = async (req, res) => {
     }
 
     req.session.userId = user._id;
-    req.session.userName = user.name;
+    req.session.userName = `${user.firstName} ${user.lastName}`;
     req.session.userRole = user.role;
 
     return res.status(200).json({
       message: "Connexion réussie.",
       user: {
         id: user._id,
-        name: user.name,
-        email: user.email
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        wantsToTeach: user.wantsToTeach,
+        expertise: user.expertise,
+        bio: user.bio
       }
     });
   } catch (error) {
