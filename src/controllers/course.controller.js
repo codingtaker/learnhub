@@ -1,4 +1,5 @@
 const Course = require('../models/course.models');
+const User = require('../models/users.models');
 
 // POST : Créer un nouveau cours
 exports.postCreateCourse = async (req, res) => {
@@ -58,3 +59,53 @@ exports.getAllCourses = async (req, res) => {
         return res.status(500).json({ error: error.message });
     }
 };
+
+exports.enrollInCourse = async (req, res) => {
+  const { courseId } = req.params;
+  const userId = req.session.userId;
+
+  try {
+    if (!userId) {
+      return res.status(401).json({ message: 'Non autorisé. Veuillez vous connecter.' });
+    }
+
+    const course = await Course.findById(courseId);
+    if (!course) {
+      return res.status(404).json({ message: 'Cours non trouvé.' });
+    }
+
+    // Vérifier si l’utilisateur est déjà inscrit
+    if (course.students.includes(userId)) {
+      return res.status(400).json({ message: 'Vous êtes déjà inscrit à ce cours.' });
+    }
+
+    // Vérifier la limite maximale d’étudiants
+    if (course.students.length >= course.maxStudents) {
+      return res.status(400).json({ message: 'Ce cours a atteint le nombre maximal d’étudiants.' });
+    }
+
+    course.students.push(userId);
+    await course.save();
+
+    return res.status(200).json({ message: 'Inscription réussie !', course });
+  } catch (error) {
+    console.error('Erreur lors de l’inscription au cours :', error);
+    return res.status(500).json({ error: error.message });
+  }
+};
+
+// exports.getCourseDetails = async (req, res) => {
+//   const { courseId } = req.params;
+
+//   try {
+//     const course = await Course.findById(courseId).populate('students', 'firstName lastName email');
+//     if (!course) {
+//       return res.status(404).json({ message: 'Cours non trouvé.' });
+//     }
+
+//     return res.status(200).json({ course });
+//   } catch (error) {
+//     console.error('Erreur lors de la récupération des détails du cours :', error);
+//     return res.status(500).json({ error: error.message });
+//   }
+// };

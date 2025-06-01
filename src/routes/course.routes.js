@@ -7,4 +7,6 @@ const { checkRole } = require('../Middleware/auth.Middleware');
 router.post('/create', checkRole(['teacher']), courseController.postCreateCourse);
 router.get('/allcourse', courseController.getAllCourses);
 
+router.post('/enroll/:courseId', courseController.enrollInCourse);
+
 module.exports = router;
